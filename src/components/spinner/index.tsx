@@ -1,7 +1,5 @@
-import React, { FC } from 'react';
-import classnames from 'classnames';
-
-import styles from './spinner.module.scss';
+import styled from 'styled-components';
+import theme from './spinner.module.scss';
 
 interface Props {
   className?: Optional<string>;
@@ -9,31 +7,27 @@ interface Props {
   color?: string;
 }
 
-const Spinner: FC<Props> = (props) => {
-  const { className, size, color, ...otherProps } = props;
+const Spinner = styled.div`
+  height: ${(props: Props): number => props?.size || 32}px;
+  aspect-ratio: 1 / 1;
 
-  const rootClass = classnames(
-    {
-      [styles.root]: true,
-    },
-    className,
-  );
+  border-radius: 50%;
+  border-style: solid;
+  border-color: ${theme.grey6};
+  border-top-color: ${(props: Props): string => props?.color || theme.dixaBlue};
+  animation: spin 0.8s linear infinite;
+  box-sizing: border-box;
+  border-width: ${(props: Props): number =>
+    Math.max(Math.floor((props?.size || 32) / 10), 1)}px;
 
-  const hwValue = typeof size === 'number' ? size : 32;
-  const hwPixelValue = typeof size === 'number' ? `${hwValue}px` : '32px';
-  const borderSizePixelValue = `${Math.max(Math.floor(hwValue / 10), 1)}px`;
-  const style: Record<string, unknown> = {
-    height: hwPixelValue,
-    width: hwPixelValue,
-    borderWidth: borderSizePixelValue,
-    borderTopColor: undefined,
-  };
-
-  if (color && color.length) {
-    style.borderTopColor = color;
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
-
-  return <div {...otherProps} style={style} className={rootClass} />;
-};
+`;
 
 export default Spinner;
