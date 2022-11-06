@@ -19,17 +19,13 @@ const Spinner: FC<Props> = (props) => {
     className,
   );
 
-  const hwValue = typeof size === 'number' ? size : 32;
-  const hwPixelValue = typeof size === 'number' ? `${hwValue}px` : '32px';
-  const borderSizePixelValue = `${Math.max(Math.floor(hwValue / 10), 1)}px`;
-  const style: Record<string, unknown> = {
-    height: hwPixelValue,
-    width: hwPixelValue,
-    borderWidth: borderSizePixelValue,
-    borderTopColor: undefined,
+  const sizeValue = size && Number.isSafeInteger(size) ? size : 32;
+  const style: Record<string, string> = {
+    width: `${sizeValue}px`,
+    borderWidth: `${Math.max(Math.floor(sizeValue / 10), 1)}px`,
   };
 
-  if (color && color.length) {
+  if (typeof color === 'string' && color.length) {
     style.borderTopColor = color;
   }
 
