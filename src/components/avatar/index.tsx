@@ -1,7 +1,6 @@
 import React, { FC } from 'react';
 import classnames from 'classnames';
-import Icon from '../icon';
-import Image from '../image';
+import { TextAvatar, IconAvatar, ImageAvatar } from './avatar.types';
 import styles from './avatar.module.scss';
 import { generateIdGradient, generateInitials } from './utils';
 
@@ -31,7 +30,7 @@ const Avatar: FC<Props> = (props) => {
 
   const username =
     user?.name || user?.displayName || user?.email || user?.phoneNumber || null;
-  const anonymousUser = user && [null, 'anonymous'].indexOf(username) > -1;
+  const isAnonymousUser = user && [null, 'anonymous'].indexOf(username) > -1;
 
   let content = null;
   if (imageSrc) {
@@ -42,7 +41,7 @@ const Avatar: FC<Props> = (props) => {
     content = <IconAvatar name={iconKey} />;
   } else if (user === null) {
     content = <IconAvatar name="user-slash" />; // Unassigned
-  } else if (anonymousUser) {
+  } else if (isAnonymousUser) {
     content = <IconAvatar name="user-secret" />; // Anonymous user
   } else if (text) {
     content = <TextAvatar text={text} />;
@@ -56,7 +55,7 @@ const Avatar: FC<Props> = (props) => {
     styleOverrides.background = color;
   } else if (gradientSeed) {
     styleOverrides.background = generateIdGradient(gradientSeed);
-  } else if (user === null || anonymousUser) {
+  } else if (user === null || isAnonymousUser) {
     styleOverrides.background = '#CACACA';
   } else if (user && !user?.avatarUrl) {
     styleOverrides.background = generateIdGradient(user.id);
@@ -77,17 +76,5 @@ const Avatar: FC<Props> = (props) => {
     </div>
   );
 };
-
-const ImageAvatar: FC<{ src: string; alt?: string }> = (props) => (
-  <Image className={styles.image} {...props} />
-);
-
-const IconAvatar: FC<{ name: string }> = (props) => (
-  <Icon className={styles.icon} {...props} />
-);
-
-const TextAvatar: FC<{ text: string }> = ({ text }) => (
-  <span className={styles.text}>{text}</span>
-);
 
 export default Avatar;
