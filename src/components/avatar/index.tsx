@@ -67,15 +67,6 @@ const Avatar: FC<Props> = (props) => {
     isBackground = true;
   }
 
-  const rootClass = classnames(
-    {
-      [styles.avatar]: true,
-      [styles.background]: isBackground,
-      [styles.avatarSmallIcon]: isSmallIcon,
-    },
-    className,
-  );
-
   if (text) {
     initials = text;
   } else if (user && !user.avatarUrl) {
@@ -90,6 +81,15 @@ const Avatar: FC<Props> = (props) => {
       initials = generateInitials(seed);
     }
   }
+
+  const rootClass = classnames(
+    {
+      [styles.avatar]: true,
+      [styles.background]: isBackground,
+      [styles.avatarSmallIcon]: isSmallIcon,
+    },
+    className,
+  );
 
   return (
     <div {...otherProps} className={rootClass} style={styleOverrides}>
