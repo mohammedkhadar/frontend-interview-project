@@ -92,10 +92,10 @@ const Avatar: FC<Props> = (props) => {
 
   return (
     <div {...otherProps} className={rootClass} style={styleOverrides}>
-      {imageTag}
-      {!!initials && <span className={styles.text}>{initials}</span>}
-      {!!iconKey && <Icon name={iconKey} className={styles.icon} />}
-      {printIcon}
+      {imageTag ||
+        (!!initials && <span className={styles.text}>{initials}</span>) ||
+        (!!iconKey && <Icon name={iconKey} className={styles.icon} />) ||
+        printIcon}
     </div>
   );
 };
