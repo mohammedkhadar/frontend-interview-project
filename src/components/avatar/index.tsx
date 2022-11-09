@@ -71,7 +71,6 @@ const Avatar: FC<Props> = (props) => {
     {
       [styles.avatar]: true,
       [styles.background]: isBackground,
-      [styles.image]: imageTag !== null,
       [styles.avatarSmallIcon]: isSmallIcon,
     },
     className,
