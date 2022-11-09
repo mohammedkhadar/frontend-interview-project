@@ -29,62 +29,43 @@ const Avatar: FC<Props> = (props) => {
     ...otherProps
   } = props;
 
-  // `unknown type` - https://mariusschulz.com/blog/the-unknown-type-in-typescript
-  const styleOverrides: Record<string, unknown> = {};
-  let initials = '';
-  let imageTag = null;
-  let isBackground = false;
-  let printIcon = null;
+  const username =
+    user?.name || user?.displayName || user?.email || user?.phoneNumber || null;
+  const anonymousUser = user && [null, 'anonymous'].indexOf(username) > -1;
 
+  let content = null;
   if (imageSrc) {
-    imageTag = <Image className={styles.image} src={imageSrc} />;
-  } else if (color) {
-    styleOverrides.backgroundColor = color;
-    isBackground = true;
-  } else if (gradientSeed) {
-    styleOverrides.background = generateIdGradient(gradientSeed);
-    isBackground = true;
-  } else if (user) {
-    if (user.avatarUrl) {
-      imageTag = (
-        <Image
-          className={styles.image}
-          src={user.avatarUrl}
-          alt={user.name || ''}
-        />
-      );
-    } else {
-      styleOverrides.background = generateIdGradient(user.id);
-      isBackground = true;
-    }
+    content = <ImageAvatar src={imageSrc} />;
+  } else if (user?.avatarUrl) {
+    content = <ImageAvatar src={user.avatarUrl} alt={user.name || ''} />;
+  } else if (iconKey) {
+    content = <IconAvatar name={iconKey} />;
   } else if (user === null) {
-    // Unassigned
-    printIcon = <Icon name="user-slash" className={styles.icon} />;
-    styleOverrides.background = '#CACACA';
-    isBackground = true;
-  } else {
-    styleOverrides.background = '#CACACA';
-    isBackground = true;
+    content = <IconAvatar name="user-slash" />; // Unassigned
+  } else if (anonymousUser) {
+    content = <IconAvatar name="user-secret" />; // Anonymous user
+  } else if (text) {
+    content = <TextAvatar text={text} />;
+  } else if (username) {
+    content = <TextAvatar text={generateInitials(username)} />;
   }
 
-  if (text) {
-    initials = text;
-  } else if (user && !user.avatarUrl) {
-    const seed =
-      user.name || user.displayName || user.email || user.phoneNumber || null;
-    if (seed === null || seed === 'anonymous') {
-      // Anonymous user.
-      printIcon = <Icon name="user-secret" className={styles.icon} />;
-      styleOverrides.background = '#CACACA';
-    } else {
-      initials = generateInitials(seed);
-    }
+  // `unknown type` - https://mariusschulz.com/blog/the-unknown-type-in-typescript
+  const styleOverrides: Record<string, unknown> = {};
+  if (color) {
+    styleOverrides.background = color;
+  } else if (gradientSeed) {
+    styleOverrides.background = generateIdGradient(gradientSeed);
+  } else if (user === null || anonymousUser) {
+    styleOverrides.background = '#CACACA';
+  } else if (user && !user?.avatarUrl) {
+    styleOverrides.background = generateIdGradient(user.id);
   }
 
   const rootClass = classnames(
     {
       [styles.avatar]: true,
-      [styles.background]: isBackground,
+      [styles.background]: styleOverrides.background,
       [styles.avatarSmallIcon]: isSmallIcon,
     },
     className,
@@ -92,12 +73,21 @@ const Avatar: FC<Props> = (props) => {
 
   return (
     <div {...otherProps} className={rootClass} style={styleOverrides}>
-      {imageTag ||
-        (!!initials && <span className={styles.text}>{initials}</span>) ||
-        (!!iconKey && <Icon name={iconKey} className={styles.icon} />) ||
-        printIcon}
+      {content}
     </div>
   );
 };
+
+const ImageAvatar: FC<{ src: string; alt?: string }> = (props) => (
+  <Image className={styles.image} {...props} />
+);
+
+const IconAvatar: FC<{ name: string }> = (props) => (
+  <Icon className={styles.icon} {...props} />
+);
+
+const TextAvatar: FC<{ text: string }> = ({ text }) => (
+  <span className={styles.text}>{text}</span>
+);
 
 export default Avatar;
