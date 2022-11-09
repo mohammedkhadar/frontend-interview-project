@@ -76,7 +76,6 @@ const Avatar: FC<Props> = (props) => {
       // Anonymous user.
       printIcon = <Icon name="user-secret" className={styles.icon} />;
       styleOverrides.background = '#CACACA';
-      isBackground = true;
     } else {
       initials = generateInitials(seed);
     }
