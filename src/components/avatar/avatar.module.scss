@@ -1,5 +1,7 @@
+@import '../../styles/import';
+
 .avatar {
-  border-radius: 6px;
+  border-radius: $dixa-border-radius;
   position: relative;
 
   &SmallIcon {
@@ -15,7 +17,7 @@
 }
 
 .image {
-  border-radius: 6px;
+  border-radius: $dixa-border-radius;
   width: 100%;
   vertical-align: bottom;
 }
