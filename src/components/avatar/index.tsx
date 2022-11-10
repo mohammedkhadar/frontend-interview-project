@@ -28,51 +28,44 @@ const Avatar: FC<Props> = (props) => {
     ...otherProps
   } = props;
 
-  const username =
+  const userName =
     user?.name || user?.displayName || user?.email || user?.phoneNumber || null;
-  const isAnonymousUser = user && [null, 'anonymous'].indexOf(username) > -1;
+  const isAnonymousUser = user && [null, 'anonymous'].indexOf(userName) > -1;
+
+  const isImageAvatar = imageSrc || user?.avatarUrl;
+  const isIconAvatar = iconKey;
+  const isTextAvatar = text || (userName && generateInitials(userName));
+  const isUnassignedOrAnonymousAvatar = user === null || isAnonymousUser;
 
   let content = null;
-  if (imageSrc) {
-    content = <ImageAvatar src={imageSrc} />;
-  } else if (user?.avatarUrl) {
-    content = <ImageAvatar src={user.avatarUrl} alt={user.name || ''} />;
-  } else if (iconKey) {
-    content = <IconAvatar name={iconKey} />;
-  } else if (user === null) {
-    content = <IconAvatar name="user-slash" />; // Unassigned
-  } else if (isAnonymousUser) {
-    content = <IconAvatar name="user-secret" />; // Anonymous user
-  } else if (text) {
-    content = <TextAvatar text={text} />;
-  } else if (username) {
-    content = <TextAvatar text={generateInitials(username)} />;
-  }
+  let background = null;
 
-  // `unknown type` - https://mariusschulz.com/blog/the-unknown-type-in-typescript
-  const styleOverrides: Record<string, unknown> = {};
-  if (content?.type === ImageAvatar) {
-    styleOverrides.background = '';
-  } else if (color) {
-    styleOverrides.background = color;
-  } else if (gradientSeed) {
-    styleOverrides.background = generateIdGradient(gradientSeed);
-  } else if (user && !user?.avatarUrl) {
-    styleOverrides.background = generateIdGradient(user.id);
-  }
-
-  if (user === null || isAnonymousUser) {
-    styleOverrides.background = '#CACACA';
+  if (isImageAvatar) {
+    content = <ImageAvatar src={isImageAvatar} alt={user?.name || ''} />;
+    background = '';
+  } else if (isIconAvatar) {
+    content = <IconAvatar name={isIconAvatar} />;
+    background = color;
+  } else if (isTextAvatar) {
+    content = <TextAvatar text={isTextAvatar} />;
+    background = generateIdGradient(gradientSeed || user?.id || '');
+  } else if (isUnassignedOrAnonymousAvatar) {
+    content = (
+      <IconAvatar name={isAnonymousUser ? 'user-secret' : 'user-slash'} />
+    );
+    background = '#CACACA';
   }
 
   const rootClass = classnames(
     {
       [styles.avatar]: true,
-      [styles.background]: styleOverrides.background,
+      [styles.background]: background,
       [styles.avatarSmallIcon]: isSmallIcon,
     },
     className,
   );
+
+  const styleOverrides: Record<string, unknown> = { background };
 
   return (
     <div {...otherProps} className={rootClass} style={styleOverrides}>
