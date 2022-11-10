@@ -51,7 +51,9 @@ const Avatar: FC<Props> = (props) => {
 
   // `unknown type` - https://mariusschulz.com/blog/the-unknown-type-in-typescript
   const styleOverrides: Record<string, unknown> = {};
-  if (color) {
+  if (content?.type === ImageAvatar) {
+    styleOverrides.background = '';
+  } else if (color) {
     styleOverrides.background = color;
   } else if (gradientSeed) {
     styleOverrides.background = generateIdGradient(gradientSeed);
