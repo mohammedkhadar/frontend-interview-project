@@ -57,10 +57,12 @@ const Avatar: FC<Props> = (props) => {
     styleOverrides.background = color;
   } else if (gradientSeed) {
     styleOverrides.background = generateIdGradient(gradientSeed);
-  } else if (user === null || isAnonymousUser) {
-    styleOverrides.background = '#CACACA';
   } else if (user && !user?.avatarUrl) {
     styleOverrides.background = generateIdGradient(user.id);
+  }
+
+  if (user === null || isAnonymousUser) {
+    styleOverrides.background = '#CACACA';
   }
 
   const rootClass = classnames(
